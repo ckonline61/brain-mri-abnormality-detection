@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Login - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-header-teal p-4">
+          <h3 class="mb-1 fw-bold text-white"><i class="fas fa-lock me-2"></i>Secure Login</h3>
+          <p class="mb-0 text-white-50">Use your account to access role-based features.</p>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Username</label>
+              <input type="text" name="username" class="form-control" required>
+              <div class="invalid-feedback">Username is required.</div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Password</label>
+              <input type="password" name="password" class="form-control" required>
+              <div class="invalid-feedback">Password is required.</div>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-teal btn-lg">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

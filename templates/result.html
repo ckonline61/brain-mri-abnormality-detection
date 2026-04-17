@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Analysis Report - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="result-banner mb-4 {{ 'abnormal' if r.is_abnormal else 'normal' }}">
+    <div class="d-flex align-items-center gap-3">
+      <div class="result-icon">
+        <i class="fas {{ 'fa-exclamation-triangle' if r.is_abnormal else 'fa-check-circle' }} fa-3x"></i>
+      </div>
+      <div>
+        <h2 class="fw-bold mb-1">
+          {% if r.is_abnormal %}Abnormality Detected{% else %}No Abnormality Detected{% endif %}
+        </h2>
+        <p class="mb-0 opacity-80">
+          Patient: <strong>{{ r.patient_name }}</strong>
+          {% if r.patient_code %}| Patient ID: {{ r.patient_code }}{% endif %}
+          | Age: {{ r.patient_age if r.patient_age is not none else 'N/A' }}
+          | Gender: {{ r.patient_gender or 'Unknown' }}
+        </p>
+        <p class="mb-0 opacity-80">Analysed: {{ r.analysed_at }}{% if r.analysed_by_username %} | By: {{ r.analysed_by_username }}{% endif %}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3"><i class="fas fa-images me-2 text-teal"></i>Visualizations</h5>
+          <div class="row g-3">
+            {% if r.orig_b64 %}
+            <div class="col-6">
+              <div class="img-panel">
+                <p class="img-label">Original MRI</p>
+                <img src="data:image/png;base64,{{ r.orig_b64 }}" alt="Original" class="result-img">
+              </div>
+            </div>
+            {% endif %}
+
+            {% if r.heatmap_b64 %}
+            <div class="col-6">
+              <div class="img-panel">
+                <p class="img-label">Anomaly Heatmap</p>
+                <img src="data:image/png;base64,{{ r.heatmap_b64 }}" alt="Heatmap" class="result-img">
+              </div>
+            </div>
+            {% endif %}
+
+            {% if r.overlay_b64 %}
+            <div class="col-6">
+              <div class="img-panel">
+                <p class="img-label">Heatmap Overlay</p>
+                <img src="data:image/png;base64,{{ r.overlay_b64 }}" alt="Overlay" class="result-img">
+              </div>
+            </div>
+            {% endif %}
+
+            {% if r.mask_b64 %}
+            <div class="col-6">
+              <div class="img-panel">
+                <p class="img-label">Anomaly Mask</p>
+                <img src="data:image/png;base64,{{ r.mask_b64 }}" alt="Mask" class="result-img">
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3"><i class="fas fa-tags me-2 text-teal"></i>Detection Summary</h5>
+          <div class="pred-badge mb-3 {% if r.pred_label == 'Normal' %}badge-normal{% else %}badge-abnormal{% endif %}">
+            {{ r.pred_label }}
+          </div>
+          <div class="metric-row"><span>Confidence</span><strong>{{ r.confidence }}%</strong></div>
+          <div class="metric-row"><span>Anomaly Score</span><strong>{{ r.anomaly_score }}</strong></div>
+          <div class="metric-row"><span>Reconstruction Loss</span><strong>{{ r.recon_loss }}</strong></div>
+          <div class="metric-row"><span>Detection Mode</span><strong>{{ r.model_mode }}</strong></div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3"><i class="fas fa-download me-2 text-teal"></i>Actions</h5>
+          <div class="d-grid gap-2">
+            {% if current_user.role in ['admin', 'doctor', 'patient'] %}
+            <a href="{{ url_for('analyze') }}" class="btn btn-teal">
+              <i class="fas fa-plus me-2"></i>New Analysis
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for('download_report_pdf', analysis_id=r.id) }}" class="btn btn-outline-teal">
+              <i class="fas fa-file-pdf me-2"></i>Download PDF Report
+            </a>
+
+            {% if current_user.role == 'patient' %}
+            <a href="{{ url_for('my_reports') }}" class="btn btn-outline-secondary">
+              <i class="fas fa-history me-2"></i>My Reports
+            </a>
+            {% else %}
+            <a href="{{ url_for('history') }}" class="btn btn-outline-secondary">
+              <i class="fas fa-history me-2"></i>View History
+            </a>
+            {% endif %}
+
+            <button class="btn btn-outline-secondary" onclick="window.print()">
+              <i class="fas fa-print me-2"></i>Print Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-warning mt-4">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    <strong>Clinical Disclaimer:</strong> This AI-generated result is intended as a decision support tool only. A qualified radiologist or neurologist must review and confirm the findings before any clinical decision is made.
+  </div>
+</div>
+{% endblock %}

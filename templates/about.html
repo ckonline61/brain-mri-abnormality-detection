@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}About - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <h2 class="fw-bold mb-1"><i class="fas fa-info-circle me-2 text-teal"></i>About the Project</h2>
+      <p class="text-muted mb-5">IGNOU MCSP-232 Final Year MCA Project</p>
+
+      <div class="row g-4 mb-5">
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <h5 class="fw-bold mb-3 text-teal">Project Details</h5>
+              <table class="table table-borderless table-sm mb-0">
+                <tr><td class="text-muted">Title</td><td><strong>Brain MRI Abnormality Detection Using Machine Learning</strong></td></tr>
+                <tr><td class="text-muted">Student</td><td><strong>Manoj Kumar Sao</strong></td></tr>
+                <tr><td class="text-muted">Enrollment</td><td><strong>24524480072</strong></td></tr>
+                <tr><td class="text-muted">Programme</td><td>MCA - 4th Semester</td></tr>
+                <tr><td class="text-muted">University</td><td>IGNOU</td></tr>
+                <tr><td class="text-muted">Course</td><td>MCSP-232</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <h5 class="fw-bold mb-3 text-teal">Technology Stack</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2"><i class="fab fa-python me-2 text-teal"></i>Python 3.10+</li>
+                <li class="mb-2"><i class="fas fa-brain me-2 text-teal"></i>TensorFlow / Keras Convolutional Autoencoder</li>
+                <li class="mb-2"><i class="fas fa-eye me-2 text-teal"></i>OpenCV and PIL for image preprocessing</li>
+                <li class="mb-2"><i class="fas fa-flask me-2 text-teal"></i>Flask web application</li>
+                <li class="mb-2"><i class="fas fa-database me-2 text-teal"></i>SQLite database</li>
+                <li class="mb-2"><i class="fas fa-chart-line me-2 text-teal"></i>NumPy and Matplotlib</li>
+                <li class="mb-2"><i class="fab fa-bootstrap me-2 text-teal"></i>Bootstrap 5 interface</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3 text-teal">System Architecture</h5>
+          <p>This project uses an <strong>unsupervised abnormality detection</strong> approach based on a convolutional autoencoder. The model is trained to reconstruct brain MRI scans and then compares the reconstructed image with the original image during inference.</p>
+          <p>The preprocessing pipeline includes <strong>image loading, skull stripping, intensity normalization, and resizing to the model input size</strong>. After reconstruction, the system generates a reconstruction error map, anomaly heatmap, heatmap overlay, and anomaly mask.</p>
+          <p class="mb-0">The final result is produced as <strong>Normal</strong> or <strong>Abnormal</strong> using reconstruction loss, anomaly score, and detected region size instead of supervised class prediction.</p>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3 text-teal">Implemented Features</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded h-100">
+                <h6 class="fw-bold mb-2">Detection Workflow</h6>
+                <p class="text-muted mb-0">Supports MRI image upload in PNG, JPG, JPEG, GIF, and BMP formats with autoencoder-based Normal or Abnormal detection.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded h-100">
+                <h6 class="fw-bold mb-2">Visual Evidence</h6>
+                <p class="text-muted mb-0">Generates anomaly heatmap, heatmap overlay, binary anomaly mask, anomaly score, and reconstruction loss for each analysis.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded h-100">
+                <h6 class="fw-bold mb-2">Reporting and History</h6>
+                <p class="text-muted mb-0">Stores analysis history and provides downloadable PDF reports with patient details and visual outputs.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded h-100">
+                <h6 class="fw-bold mb-2">Security and Roles</h6>
+                <p class="text-muted mb-0">Includes role-based access for admin, doctor, and patient users, along with audit logging and encrypted backup support.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3 text-teal">Detection Summary</h5>
+          <div class="row g-3">
+            {% for metric, val in [('Detection Output','Normal / Abnormal'),('Core Model','Autoencoder'),('Heatmap','Available'),('Mask','Available'),('Reconstruction Loss','Available'),('Anomaly Score','Available')] %}
+            <div class="col-md-6">
+              <div class="workflow-step h-100">
+                <div class="step-num">{{ loop.index }}</div>
+                <div class="step-content">
+                  <h6 class="fw-bold mb-1">{{ metric }}</h6>
+                  <p class="text-muted mb-0">{{ val }}</p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Patient Registration - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-header-teal p-4">
+          <h3 class="mb-1 fw-bold text-white"><i class="fas fa-user-plus me-2"></i>Patient Registration</h3>
+          <p class="mb-0 text-white-50">Create a patient account to view only your own MRI reports.</p>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Full Name</label>
+                <input type="text" name="full_name" class="form-control" required>
+                <div class="invalid-feedback">Full name is required.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Username</label>
+                <input type="text" name="username" class="form-control" required>
+                <div class="invalid-feedback">Username is required.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Age</label>
+                <input type="number" name="age" class="form-control" min="1" max="120">
+                <div class="invalid-feedback">Please enter a valid age.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Gender</label>
+                <select name="gender" class="form-select">
+                  <option value="Unknown">Select</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Password</label>
+                <input type="password" name="password" class="form-control" required>
+                <div class="invalid-feedback">Password is required.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Confirm Password</label>
+                <input type="password" name="confirm_password" class="form-control" required>
+                <div class="invalid-feedback">Please confirm the password.</div>
+              </div>
+            </div>
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-teal btn-lg">Create Patient Account</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

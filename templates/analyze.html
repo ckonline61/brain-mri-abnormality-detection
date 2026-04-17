@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Analyze MRI - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-header-teal p-4">
+          <h3 class="mb-0 fw-bold text-white">
+            <i class="fas fa-microscope me-2"></i>Brain MRI Analysis
+          </h3>
+          <p class="mb-0 mt-1 opacity-80 text-white-50">
+            {% if current_user.role == 'patient' %}
+              Your report will remain visible only inside your patient account.
+            {% else %}
+              Admins and doctors can analyze scans and assign them to registered patients.
+            {% endif %}
+          </p>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST" action="{{ url_for('analyze') }}" enctype="multipart/form-data" id="analysisForm" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <h5 class="section-subheading mb-3"><i class="fas fa-user-injured me-2 text-teal"></i>Patient Information</h5>
+
+            {% if current_user.role in ['admin', 'doctor'] %}
+              <div class="mb-4">
+                <label class="form-label fw-semibold">Registered Patient</label>
+                <select name="selected_patient_id" id="selectedPatientId" class="form-select">
+                  <option value="">Create ad-hoc patient record</option>
+                  {% for patient in patient_options %}
+                    <option value="{{ patient.id }}">
+                      {{ patient.name }} | {{ patient.patient_id }}{% if patient.username %} | {{ patient.username }}{% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+                <small class="text-muted">Select a registered patient so that they can view this report in their account.</small>
+              </div>
+            {% endif %}
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Patient Name {% if current_user.role in ['admin', 'doctor'] %}<span class="text-danger">*</span>{% endif %}</label>
+                <input
+                  type="text"
+                  name="patient_name"
+                  id="patientName"
+                  class="form-control"
+                  placeholder="Full name"
+                  value="{{ patient_profile.name if patient_profile else '' }}"
+                  {% if current_user.role in ['admin', 'doctor'] %}required{% endif %}
+                  {% if current_user.role == 'patient' %}readonly{% endif %}
+                >
+                <div class="invalid-feedback">Patient name is required.</div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Age</label>
+                <input
+                  type="number"
+                  name="patient_age"
+                  class="form-control"
+                  min="1"
+                  max="120"
+                  value="{{ patient_profile.age if patient_profile and patient_profile.age is not none else '' }}"
+                  {% if current_user.role == 'patient' %}readonly{% endif %}
+                >
+                <div class="invalid-feedback">Please enter a valid age.</div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Gender</label>
+                <select name="patient_gender" class="form-select" {% if current_user.role == 'patient' %}disabled{% endif %}>
+                  <option value="Unknown" {% if not patient_profile or patient_profile.gender == 'Unknown' %}selected{% endif %}>Select</option>
+                  <option value="Male" {% if patient_profile and patient_profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                  <option value="Female" {% if patient_profile and patient_profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                  <option value="Other" {% if patient_profile and patient_profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+                {% if current_user.role == 'patient' %}
+                  <input type="hidden" name="patient_gender" value="{{ patient_profile.gender if patient_profile else 'Unknown' }}">
+                {% endif %}
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <h5 class="section-subheading mb-3"><i class="fas fa-file-medical me-2 text-teal"></i>MRI Image</h5>
+            <div class="upload-zone" id="uploadZone">
+              <div class="upload-icon"><i class="fas fa-cloud-upload-alt fa-3x text-teal"></i></div>
+              <h5 class="mt-3 fw-semibold">Drag & drop or click to upload</h5>
+              <p class="text-muted mb-3">Supports PNG, JPG, JPEG, BMP, GIF (max 16 MB)</p>
+              <input type="file" name="mri_file" id="mriFile" class="d-none" accept=".png,.jpg,.jpeg,.bmp,.gif" required>
+              <div class="invalid-feedback d-block mt-2">Please upload an MRI image.</div>
+              <button type="button" class="btn btn-outline-teal" onclick="document.getElementById('mriFile').click()">
+                <i class="fas fa-folder-open me-2"></i>Browse File
+              </button>
+            </div>
+
+            <div id="previewSection" class="mt-3 d-none">
+              <div class="row align-items-center g-3">
+                <div class="col-auto">
+                  <img id="previewImg" src="#" alt="Preview" class="preview-thumb rounded border">
+                </div>
+                <div class="col">
+                  <p class="mb-1 fw-semibold" id="previewName">-</p>
+                  <p class="mb-0 text-muted small" id="previewSize">-</p>
+                  <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="clearFile()">
+                    <i class="fas fa-times me-1"></i>Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-teal btn-lg" id="submitBtn">
+                <i class="fas fa-brain me-2"></i>Analyze MRI
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const zone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('mriFile');
+const selectedPatient = document.getElementById('selectedPatientId');
+const patientNameInput = document.getElementById('patientName');
+
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('drag-over');
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    fileInput.files = files;
+    handleFileSelect(files[0]);
+  }
+});
+
+fileInput.addEventListener('change', e => {
+  if (e.target.files.length) {
+    handleFileSelect(e.target.files[0]);
+  }
+});
+
+function handleFileSelect(file) {
+  const reader = new FileReader();
+  reader.onload = evt => {
+    document.getElementById('previewImg').src = evt.target.result;
+    document.getElementById('previewName').textContent = file.name;
+    document.getElementById('previewSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+    document.getElementById('previewSection').classList.remove('d-none');
+    document.getElementById('uploadZone').style.border = '2px solid var(--teal)';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearFile() {
+  fileInput.value = '';
+  document.getElementById('previewSection').classList.add('d-none');
+  document.getElementById('uploadZone').style.border = '';
+}
+
+function syncPatientValidation() {
+  if (!selectedPatient || !patientNameInput) return;
+  const usingRegisteredPatient = Boolean(selectedPatient.value);
+  patientNameInput.required = !usingRegisteredPatient;
+  if (usingRegisteredPatient) {
+    patientNameInput.classList.remove('is-invalid');
+  }
+}
+
+if (selectedPatient) {
+  selectedPatient.addEventListener('change', syncPatientValidation);
+  syncPatientValidation();
+}
+
+document.getElementById('analysisForm').addEventListener('submit', function(event) {
+  if (!this.checkValidity()) {
+    return;
+  }
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing...';
+  btn.disabled = true;
+});
+</script>
+{% endblock %}

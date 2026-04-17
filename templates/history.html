@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-1"><i class="fas fa-history me-2 text-teal"></i>{{ page_title }}</h2>
+  <p class="text-muted mb-4">
+    {% if current_user.role == 'patient' %}
+      Only your own reports are visible here.
+    {% else %}
+      Complete log of all MRI analyses available to your role.
+    {% endif %}
+  </p>
+
+  {% if analyses %}
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Patient</th>
+              <th>Patient Code</th>
+              <th>Result</th>
+              <th>Confidence</th>
+              <th>Anomaly Score</th>
+              <th>Model</th>
+              <th>Analysed By</th>
+              <th>Date/Time</th>
+              <th>Report</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in analyses %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td class="fw-semibold">{{ a.patient_name }}</td>
+              <td><small>{{ a.patient_code }}</small></td>
+              <td>
+                <span class="badge {{ 'bg-danger' if a.result_label != 'Normal' else 'bg-success' }}">
+                  {{ a.result_label }}
+                </span>
+              </td>
+              <td>{{ (a.confidence * 100)|round(1) }}%</td>
+              <td>{{ a.anomaly_score|round(4) }}</td>
+              <td><small class="badge bg-secondary">{{ a.model_version }}</small></td>
+              <td><small>{{ a.analysed_by_username or 'System' }}</small></td>
+              <td><small>{{ a.analysed_at[:16] }}</small></td>
+              <td><a href="{{ url_for('view_report', analysis_id=a.id) }}" class="btn btn-sm btn-outline-teal">Open</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="fas fa-inbox fa-4x text-muted mb-3 d-block"></i>
+    <h5 class="text-muted">No reports available yet</h5>
+    {% if current_user.role in ['admin', 'doctor', 'patient'] %}
+      <a href="{{ url_for('analyze') }}" class="btn btn-teal mt-3">Start Analysis</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

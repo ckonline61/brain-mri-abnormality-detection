@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local secrets and runtime state
+.env
+instance/
+backups/
+brain_mri.db
+
+# Generated uploads and analysis outputs
+static/uploads/
+static/results/
+
+# OS/editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/

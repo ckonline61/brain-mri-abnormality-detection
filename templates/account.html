@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}My Account - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header-teal p-4">
+          <h3 class="mb-1 fw-bold text-white"><i class="fas fa-id-badge me-2"></i>Account Details</h3>
+          <p class="mb-0 text-white-50">Logged-in users can update their username and password here.</p>
+        </div>
+        <div class="card-body p-4">
+          <div class="metric-row"><span>Role</span><strong>{{ current_user.role|title }}</strong></div>
+          <div class="metric-row"><span>Full Name</span><strong>{{ current_user.full_name or '-' }}</strong></div>
+          <div class="metric-row"><span>Current Username</span><strong>{{ current_user.username }}</strong></div>
+          {% if current_user.role == 'patient' and patient_profile %}
+          <div class="metric-row"><span>Patient ID</span><strong>{{ patient_profile.patient_id }}</strong></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3"><i class="fas fa-user-edit me-2 text-teal"></i>Change Username</h5>
+          <form method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="username">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">New Username</label>
+              <input type="text" name="username" class="form-control" value="{{ current_user.username }}" required>
+              <div class="invalid-feedback">Username is required.</div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Current Password</label>
+              <input type="password" name="current_password" class="form-control" required>
+              <div class="invalid-feedback">Current password is required.</div>
+            </div>
+            <button type="submit" class="btn btn-teal">Update Username</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3"><i class="fas fa-key me-2 text-teal"></i>Change Password</h5>
+          <form method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="password">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Current Password</label>
+              <input type="password" name="current_password" class="form-control" required>
+              <div class="invalid-feedback">Current password is required.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">New Password</label>
+              <input type="password" name="new_password" class="form-control" required>
+              <div class="invalid-feedback">New password is required.</div>
+              <small class="text-muted">Password must contain at least 8 characters, 1 letter, and 1 number.</small>
+            </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Confirm New Password</label>
+              <input type="password" name="confirm_password" class="form-control" required>
+              <div class="invalid-feedback">Please confirm the new password.</div>
+            </div>
+            <button type="submit" class="btn btn-teal">Update Password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

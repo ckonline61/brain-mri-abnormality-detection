@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Brain MRI Detection - Home{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<section class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="container position-relative z-1 text-center text-white py-5">
+    <div class="hero-icon mb-4">
+      <i class="fas fa-brain fa-4x text-teal"></i>
+    </div>
+    <h1 class="display-4 fw-bold mb-3">Brain MRI Abnormality Detection<br>Using Machine Learning</h1>
+    <p class="lead mb-4 opacity-90">
+      Unsupervised autoencoder-based MRI analysis that detects abnormal patterns using reconstruction error, anomaly score, heatmaps, and region masks.
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="/analyze" class="btn btn-teal btn-lg px-4">
+        <i class="fas fa-upload me-2"></i>Upload MRI Scan
+      </a>
+      <a href="/dashboard" class="btn btn-outline-light btn-lg px-4">
+        <i class="fas fa-chart-bar me-2"></i>View Dashboard
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar py-4">
+  <div class="container">
+    <div class="row g-3 text-center">
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <h3 class="stat-num text-teal">Autoencoder</h3>
+          <p class="stat-label">Detection Engine</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <h3 class="stat-num text-teal">16 MB</h3>
+          <p class="stat-label">Upload Limit</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <h3 class="stat-num text-teal">2</h3>
+          <p class="stat-label">Detection Outcomes</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <h3 class="stat-num text-teal">5 Formats</h3>
+          <p class="stat-label">PNG / JPG / JPEG / GIF / BMP</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">Key Features</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4">
+          <div class="feature-icon mb-3"><i class="fas fa-robot fa-2x text-teal"></i></div>
+          <h5 class="fw-bold">Unsupervised AI</h5>
+          <p class="text-muted">Convolutional autoencoder reconstructs the MRI and highlights suspicious regions through reconstruction error without class-based supervision.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4">
+          <div class="feature-icon mb-3"><i class="fas fa-fire fa-2x text-teal"></i></div>
+          <h5 class="fw-bold">Heatmap Visualization</h5>
+          <p class="text-muted">Color-coded anomaly heatmaps, overlay views, and binary masks help show where the reconstruction error is highest.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4">
+          <div class="feature-icon mb-3"><i class="fas fa-tags fa-2x text-teal"></i></div>
+          <h5 class="fw-bold">Normal vs Abnormal Output</h5>
+          <p class="text-muted">The system reports whether the uploaded MRI appears Normal or Abnormal and supports that decision with anomaly score and reconstruction loss.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4">
+          <div class="feature-icon mb-3"><i class="fas fa-shield-alt fa-2x text-teal"></i></div>
+          <h5 class="fw-bold">Secure Access Control</h5>
+          <p class="text-muted">Encrypted patient records, role-based access, audit logging, and protected backups help keep analysis data secure.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4">
+          <div class="feature-icon mb-3"><i class="fas fa-file-pdf fa-2x text-teal"></i></div>
+          <h5 class="fw-bold">PDF Reports</h5>
+          <p class="text-muted">Generate PDF reports containing the detection result, anomaly score, reconstruction loss, and visual overlays.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4">
+          <div class="feature-icon mb-3"><i class="fas fa-history fa-2x text-teal"></i></div>
+          <h5 class="fw-bold">Stored Analysis History</h5>
+          <p class="text-muted">Each analysis is saved with patient details, visual outputs, and report access for later review through the dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">How It Works</h2>
+    <div class="row g-0 justify-content-center">
+      <div class="col-md-10">
+        <div class="workflow-steps">
+          <div class="workflow-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h6 class="fw-bold">Upload MRI Scan</h6>
+              <p class="text-muted mb-0">Upload a brain MRI image in PNG, JPG, JPEG, GIF, or BMP format through the secure interface.</p>
+            </div>
+          </div>
+          <div class="workflow-arrow"><i class="fas fa-chevron-right text-teal"></i></div>
+          <div class="workflow-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h6 class="fw-bold">Preprocessing</h6>
+              <p class="text-muted mb-0">Skull stripping, intensity normalization, and resizing to the autoencoder input size.</p>
+            </div>
+          </div>
+          <div class="workflow-arrow"><i class="fas fa-chevron-right text-teal"></i></div>
+          <div class="workflow-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h6 class="fw-bold">AI Inference</h6>
+              <p class="text-muted mb-0">The autoencoder reconstructs the image and identifies abnormal patterns through reconstruction error.</p>
+            </div>
+          </div>
+          <div class="workflow-arrow"><i class="fas fa-chevron-right text-teal"></i></div>
+          <div class="workflow-step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h6 class="fw-bold">Results</h6>
+              <p class="text-muted mb-0">Heatmap, heatmap overlay, anomaly mask, anomaly score, reconstruction loss, and PDF report.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section py-5 text-center text-white">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Ready to Analyze a Brain MRI?</h2>
+    <p class="lead mb-4 opacity-90">Upload a scan to generate a Normal or Abnormal detection result with visual evidence.</p>
+    <a href="/analyze" class="btn btn-teal btn-lg px-5">
+      <i class="fas fa-microscope me-2"></i>Start Analysis
+    </a>
+  </div>
+</section>
+{% endblock %}

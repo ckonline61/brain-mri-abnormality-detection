@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Brain MRI Detection{% endblock %}
+{% block content %}
+<div class="container-fluid py-4 px-4">
+  <h2 class="fw-bold mb-1"><i class="fas fa-chart-bar me-2 text-teal"></i>Dashboard</h2>
+  <p class="text-muted mb-4">Admin and doctor users can monitor stored MRI analyses, patient activity, and abnormality detection results here.</p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-icon bg-teal-light"><i class="fas fa-users text-teal"></i></div>
+        <div>
+          <h3 class="kpi-num">{{ stats.total_patients }}</h3>
+          <p class="kpi-label">Total Patients</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-icon bg-blue-light"><i class="fas fa-file-medical text-primary"></i></div>
+        <div>
+          <h3 class="kpi-num">{{ stats.total_scans }}</h3>
+          <p class="kpi-label">Stored Analyses</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-icon bg-red-light"><i class="fas fa-exclamation-triangle text-danger"></i></div>
+        <div>
+          <h3 class="kpi-num">{{ stats.abnormal_count }}</h3>
+          <p class="kpi-label">Abnormal Results</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-icon bg-green-light"><i class="fas fa-check-circle text-success"></i></div>
+        <div>
+          <h3 class="kpi-num">{{ stats.normal_count }}</h3>
+          <p class="kpi-label">Normal Results</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="fw-bold mb-3">Detection Result Distribution</h6>
+          <p class="text-muted small mb-3">Based on the analyses currently stored in the database.</p>
+          <canvas id="donutChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="fw-bold mb-3">Available Detection Outputs</h6>
+          <p class="text-muted small mb-3">These are the result elements generated for each completed analysis.</p>
+          <canvas id="metricsChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0"><i class="fas fa-list me-2 text-teal"></i>Recent Analyses</h5>
+        <a href="{{ url_for('analyze') }}" class="btn btn-sm btn-teal"><i class="fas fa-plus me-1"></i>New</a>
+      </div>
+      {% if analyses %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Patient</th>
+              <th>Patient Code</th>
+              <th>Result</th>
+              <th>Confidence</th>
+              <th>Analyzed By</th>
+              <th>Date</th>
+              <th>Report</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in analyses %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td class="fw-semibold">{{ a.patient_name }}</td>
+              <td><small class="text-muted">{{ a.patient_code }}</small></td>
+              <td>
+                <span class="badge {{ 'bg-danger' if a.result_label != 'Normal' else 'bg-success' }}">
+                  {{ a.result_label }}
+                </span>
+              </td>
+              <td>{{ (a.confidence * 100)|round(1) }}%</td>
+              <td>{{ a.analysed_by_username or 'System' }}</td>
+              <td><small>{{ a.analysed_at[:16] }}</small></td>
+              <td><a href="{{ url_for('view_report', analysis_id=a.id) }}" class="btn btn-sm btn-outline-teal">Open</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5 text-muted">
+        <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+        No analyses yet. <a href="{{ url_for('analyze') }}">Start your first analysis</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const teal = '#20808D', rust = '#A84B2F', slate = '#5C677D', gold = '#C28B00', pine = '#2F6B4F';
+
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Normal', 'Abnormal'],
+    datasets: [{ data: [{{ stats.normal_count }}, {{ stats.abnormal_count }}], backgroundColor: [teal, rust], borderWidth: 0 }]
+  },
+  options: { plugins: { legend: { position: 'bottom' } }, cutout: '65%' }
+});
+
+new Chart(document.getElementById('metricsChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Heatmap', 'Overlay', 'Mask', 'Anomaly Score', 'Reconstruction Loss'],
+    datasets: [{
+      label: 'Generated Per Analysis',
+      data: [1, 1, 1, 1, 1],
+      backgroundColor: [teal, rust, slate, gold, pine],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        min: 0,
+        max: 1,
+        ticks: {
+          stepSize: 1,
+          callback: function(value) {
+            return value === 1 ? 'Yes' : 'No';
+          }
+        }
+      }
+    }
+  }
+});
+</script>
+{% endblock %}
