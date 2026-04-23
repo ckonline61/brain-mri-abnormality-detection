@@ -1,6 +1,6 @@
 """
 Brain MRI Abnormality Detection - Autoencoder Model
-Author: Manoj Kumar Sao | Enrollment: 24524480072 | MCA 4th Sem | IGNOU
+Author: Manoj Kumar Sao | Enrollment: 2452448072 | MCA 4th Sem | IGNOU
 """
 
 import os

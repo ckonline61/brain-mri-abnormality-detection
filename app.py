@@ -1,6 +1,6 @@
 """
 Brain MRI Abnormality Detection - Flask Web Application
-Author : Manoj Kumar Sao | Enrollment: 24524480072 | MCA 4th Sem | IGNOU
+Author : Manoj Kumar Sao | Enrollment: 2452448072 | MCA 4th Sem | IGNOU
 """
 
 import base64
@@ -75,8 +75,9 @@ from utils.security import (
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'change-this-local-dev-secret')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
-RESULTS_FOLDER = os.path.join('static', 'results')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+RESULTS_FOLDER = os.path.join(BASE_DIR, 'static', 'results')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULTS_FOLDER, exist_ok=True)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
@@ -95,7 +96,7 @@ init_db()
 
 def try_load_models():
     global MODEL_LOADED, autoencoder, MODEL_INPUT_SIZE
-    ae_path = 'models/autoencoder.h5'
+    ae_path = os.path.join(BASE_DIR, 'models', 'autoencoder.h5')
     try:
         import tensorflow as tf
 

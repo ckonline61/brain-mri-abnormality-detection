@@ -1,37 +1,61 @@
 # Brain MRI Abnormality Detection System
 
-A Flask-based web application for binary Brain MRI abnormality detection using an unsupervised convolutional autoencoder. The system accepts MRI image uploads, performs preprocessing, generates anomaly visualizations, stores analysis history, and exports PDF reports.
+This project is a Flask-based web application for binary brain MRI abnormality detection using an unsupervised Convolutional Autoencoder. The system accepts MRI image uploads, preprocesses the scan, reconstructs it through the trained model, computes reconstruction error, and produces a final `Normal` or `Abnormal` result with supporting visual evidence.
 
-## Features
+## Core Features
 
-- Binary detection output: `Normal` or `Abnormal`
+- Binary MRI analysis result: `Normal` or `Abnormal`
+- Unsupervised Convolutional Autoencoder based detection
 - MRI preprocessing with grayscale conversion, resizing, normalization, and skull stripping
-- Autoencoder-based reconstruction error analysis
-- Heatmap, overlay, and anomaly mask generation
-- User roles: `Admin`, `Doctor`, `Patient`
-- Analysis history and dashboard statistics
-- PDF report generation
+- Reconstruction error map, anomaly score, heatmap, mask, and overlay generation
+- Secure Flask web application with login and role-based access
+- User roles: `Admin`, `Doctor`, and `Patient`
+- Analysis history, dashboard metrics, and downloadable PDF reports
 - Encrypted backup support and audit logging
+
+## Technology Stack
+
+- Python
+- Flask
+- TensorFlow / Keras
+- OpenCV
+- NumPy
+- ReportLab
+- SQLite
 
 ## Project Structure
 
 ```text
 brain_mri_project/
-├── app.py
-├── model.py
-├── requirements.txt
-├── models/
-├── static/
-├── templates/
-└── utils/
+|-- app.py
+|-- model.py
+|-- evaluate_dataset.py
+|-- requirements.txt
+|-- models/
+|-- static/
+|-- templates/
+|-- utils/
+|-- reports/
+`-- Data_Set/
 ```
 
-## Requirements
+## Setup
 
-- Python 3.10+
-- pip
+### 1. Create a virtual environment
 
-Install dependencies:
+```bash
+python -m venv .venv
+```
+
+### 2. Activate the virtual environment
+
+On Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -39,21 +63,23 @@ pip install -r requirements.txt
 
 ## Environment Variables
 
-This project supports the following optional environment variables:
+Optional environment variables:
 
 - `SECRET_KEY`: Flask session secret key
 - `BRAIN_MRI_ENCRYPTION_KEY`: encryption key for protected fields and backups
 
-Example:
+Example on Windows:
 
 ```bash
 set SECRET_KEY=replace-with-a-strong-random-secret
 set BRAIN_MRI_ENCRYPTION_KEY=your-generated-fernet-key
 ```
 
-On first run, the application will create a fresh SQLite database and local encryption key automatically if they are not already present.
+If these are not provided, the project can still run locally. On first run, it creates the local database and encryption key automatically if they do not already exist.
 
-## Run Locally
+## How to Run
+
+From the `brain_mri_project` folder:
 
 ```bash
 python app.py
@@ -65,6 +91,12 @@ Then open:
 http://127.0.0.1:5000
 ```
 
+You can also start the project from the root-level batch file:
+
+```bash
+run_brain_mri_project.bat
+```
+
 ## Default Users
 
 The application seeds default users on first run:
@@ -72,14 +104,27 @@ The application seeds default users on first run:
 - `admin / admin123`
 - `doctor / doctor123`
 
-Change these credentials after first login if you plan to use the app beyond local academic/demo use.
+These are intended only for local academic/demo use.
 
-## Notes for GitHub
+## Evaluation Assets
 
-- Local database files, encrypted keys, backups, and generated analysis images are excluded through `.gitignore`
-- This repository is prepared to share source code safely without personal runtime data
-- If you want to publish the trained model, keep `models/autoencoder.h5` in the repository
+The `reports/evaluation/` folder contains submission-ready analysis outputs such as:
+
+- confusion matrix
+- ROC curve
+- precision-recall curve
+- threshold sensitivity chart
+- reconstruction loss chart
+- anomaly score distribution chart
+- sample result comparison
+- architecture diagram
+
+## Notes
+
+- The trained model file is stored at `models/autoencoder.h5`.
+- Runtime-generated uploads, result images, backups, and local database files are excluded through `.gitignore`.
+- The dataset folder is included separately for local project use.
 
 ## Disclaimer
 
-This project is an academic implementation for Brain MRI abnormality detection. It is not a certified medical diagnosis system, and final interpretation should be confirmed by a qualified doctor or radiologist.
+This project is an academic implementation for brain MRI abnormality detection. It is not a certified medical diagnosis system, and all results should be reviewed by a qualified doctor or radiologist.

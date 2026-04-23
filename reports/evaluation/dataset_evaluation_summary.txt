@@ -1,0 +1,24 @@
+Brain MRI Dataset Evaluation Summary
+========================================
+Total images: 197
+Normal images (no): 80
+Abnormal images (yes): 117
+
+Accuracy: 0.9848 (194/197)
+Abnormal precision: 0.9831
+Abnormal recall: 0.9915
+Abnormal F1-score: 0.9872
+
+Confusion matrix
+TN: 78
+FP: 2
+FN: 1
+TP: 116
+
+Anomaly score statistics
+Normal mean score: 0.029303
+Abnormal mean score: 0.105958
+Overall mean score: 0.074829
+Decision threshold (score): 0.040000
+Decision threshold (loss): 0.003000
+Decision threshold (largest cluster %): 3.75
